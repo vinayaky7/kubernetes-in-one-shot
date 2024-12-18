@@ -1,237 +1,261 @@
 # Kubernetes in One Shot
 
-This README serves as a comprehensive guide to all the commands used in the "Kubernetes in One Shot" tutorial. Commands are categorized by topic for better organization, with a brief description of each command to help you understand its purpose and usage.
+This README is a comprehensive guide for "Kubernetes in One Shot." It contains categorized commands from your history, structured by core Kubernetes topics. Each command is briefly described for ease of understanding and use.
 
 ---
 
-## **Kind Cluster Setup**
+## **Core Concepts**
 
-1. `vim config.yml`  
-   Create or edit the configuration file for the Kind cluster.
+### Monolithic vs Microservices, Kubernetes Architecture
 
-2. `kind create cluster --name=tws-cluster --config=config.yml`  
-   Create a Kubernetes cluster using Kind with the specified configuration.
+1. `kubectl cluster-info`  
+   Display cluster information to understand the Kubernetes architecture.
 
-3. `kubectl cluster-info --context kind-tws-cluster`  
-   Display cluster information for the Kind cluster context.
+### Setup On Local/AWS EC2
 
-4. `kubectl config use-context kind-tws-cluster`  
-   Switch the current context to the Kind cluster.
+1. `kind create cluster --name=tws-cluster --config=config.yml`  
+   Create a Kubernetes cluster using Kind with a specific configuration.
+2. `kubectl config use-context kind-tws-cluster`  
+   Switch the context to the Kind cluster.
 
-5. `kubectl get nodes`  
+### Kubectl and Pods
+
+1. `kubectl get nodes`  
    List all nodes in the Kubernetes cluster.
+2. `kubectl run nginx --image=nginx -n nginx`  
+   Create a pod named nginx in the nginx namespace.
+3. `kubectl describe pod nginx -n nginx`  
+   Display detailed information about the nginx pod.
 
----
+### Namespaces, Labels, Selectors, Annotations
 
-## **Namespaces**
-
-1. `kubectl apply -f namespace.yml`  
-   Apply the namespace configuration from `namespace.yml`.
-
-2. `kubectl delete -f namespace.yml`  
-   Delete the namespace specified in `namespace.yml`.
-
-3. `kubectl get namespaces`  
+1. `kubectl create namespace monitoring`  
+   Create a namespace for monitoring resources.
+2. `kubectl get namespace`  
    List all namespaces in the cluster.
-
-4. `kubectl create ns nginx`  
-   Create a namespace named `nginx`.
-
-5. `kubectl get ns`  
-   List all namespaces in the cluster.
+3. `kubectl label namespace monitoring team=devops`  
+   Add a label to the monitoring namespace.
+4. `kubectl describe namespace monitoring`  
+   Display detailed information about the monitoring namespace.
 
 ---
 
-## **Deployments and ReplicaSets**
+## **Workloads**
 
-1. `vim deployment.yml`  
-   Create or edit a deployment configuration file.
+### Deployments
 
-2. `kubectl apply -f deployment.yml`  
-   Apply the deployment configuration from `deployment.yml`.
+1. `kubectl apply -f deployment.yml`  
+   Deploy a workload defined in `deployment.yml`.
+2. `kubectl scale deployment nginx-deployment --replicas=3 -n nginx`  
+   Scale the deployment to 3 replicas.
 
-3. `kubectl delete -f deployment.yml`  
-   Delete the deployment specified in `deployment.yml`.
+### StatefulSets
 
-4. `kubectl set image deployment/nginx-deployment -n nginx nginx=nginx:latest`  
-   Update the `nginx` container image in the `nginx-deployment` deployment to the latest version.
+1. `kubectl apply -f statefulset.yml`  
+   Deploy a StatefulSet defined in `statefulset.yml`.
+2. `kubectl describe statefulset mysql -n database`  
+   Display detailed information about a StatefulSet.
 
-5. `kubectl scale deployment/nginx-deployment -n nginx --replicas=5`  
-   Scale the `nginx-deployment` to 5 replicas.
+### DaemonSets
 
-6. `kubectl get deployment -n nginx`  
-   List all deployments in the `nginx` namespace.
+1. `kubectl apply -f daemonset.yml`  
+   Deploy a DaemonSet for running pods on every node.
+2. `kubectl describe daemonset fluentd -n logging`  
+   Display details about a DaemonSet.
 
-7. `cp deployment.yml replicasets.yml`  
-   Copy the `deployment.yml` file to create `replicasets.yml`.
+### ReplicaSets
 
-8. `kubectl apply -f replicasets.yml`  
-   Apply the ReplicaSet configuration from `replicasets.yml`.
+1. `kubectl apply -f replicaset.yml`  
+   Deploy a ReplicaSet for managing pod replicas.
+2. `kubectl describe replicaset nginx-replicaset -n nginx`  
+   Show detailed information about the ReplicaSet.
 
-9. `kubectl delete -f replicasets.yml`  
-   Delete the ReplicaSet specified in `replicasets.yml`.
+### Jobs and CronJobs
 
-10. `kubectl get replicasets -n nginx`  
-    List all ReplicaSets in the `nginx` namespace.
-
----
-
-## **DaemonSets**
-
-1. `vim daemonsets.yml`  
-   Open `daemonsets.yml` in a text editor for modifications.
-
-2. `kubectl apply -f daemonsets.yml`  
-   Apply the DaemonSet configuration from `daemonsets.yml`.
-
-3. `kubectl delete -f daemonsets.yml`  
-   Delete the DaemonSet specified in `daemonsets.yml`.
-
-4. `kubectl get pods -n nginx -o wide`  
-   List all pods in the `nginx` namespace with detailed information, such as node assignment.
+1. `kubectl apply -f job.yml`  
+   Deploy a Job defined in `job.yml`.
+2. `kubectl apply -f cronjob.yml`  
+   Deploy a CronJob to schedule recurring tasks.
 
 ---
 
-## **Jobs and CronJobs**
+## **Networking**
 
-1. `vim job.yml`  
-   Create or edit a Job configuration file.
+### Cluster Networking
 
-2. `kubectl apply -f job.yml`  
-   Apply the Job configuration from `job.yml`.
+1. `kubectl get svc -A`  
+   List all services in the cluster.
 
-3. `kubectl get job -n nginx`  
-   List all Jobs in the `nginx` namespace.
+### Services
 
-4. `kubectl logs pod/[pod_name] -n nginx`  
-   View logs for a specific pod in the `nginx` namespace.
+1. `kubectl apply -f service.yml`  
+   Expose an application as a service.
+2. `kubectl describe svc nginx-service -n nginx`  
+   Show details of the nginx service.
 
-5. `kubectl delete -f job.yml`  
-   Delete the Job specified in `job.yml`.
+### Ingress
 
-6. `vim cron-job.yml`  
-   Create or edit a CronJob configuration file.
+1. `kubectl apply -f ingress.yml`  
+   Configure an Ingress resource for routing traffic.
+2. `kubectl describe ingress nginx-ingress -n nginx`  
+   Display details about an Ingress resource.
 
-7. `kubectl apply -f cron-job.yml`  
-   Apply the CronJob configuration from `cron-job.yml`.
+### Network Policies
 
-8. `kubectl get cronjob -n nginx`  
-   List all CronJobs in the `nginx` namespace.
-
----
-
-## **Services and Networking**
-
-1. `vim service.yml`  
-   Create or edit a Service configuration file.
-
-2. `kubectl apply -f service.yml`  
-   Apply the Service configuration from `service.yml`.
-
-3. `kubectl describe svc [service_name] -n [namespace]`  
-   Display detailed information about a service in the specified namespace.
-
-4. `kubectl get svc -n nginx`  
-   List all services in the `nginx` namespace.
-
-5. `kubectl port-forward service/nginx-service -n nginx [host_port]:[container_port] --address=0.0.0.0`  
-   Forward a port from the service to the host.
-
-6. `kubectl apply -f ingress.yml`  
-   Apply an Ingress configuration.
-
-7. `kubectl get ing -n nginx`  
-   List all Ingress resources in the `nginx` namespace.
+1. `kubectl apply -f networkpolicy.yml`  
+   Apply network restrictions between pods and services.
 
 ---
 
-## **Persistent Storage**
+## **Storage**
 
-1. `vim persistentVolume.yml`  
-   Create or edit a PersistentVolume configuration file.
+### Persistent Volumes (PV), Persistent Volume Claims (PVC)
 
-2. `kubectl apply -f persistentVolume.yml`  
-   Apply the PersistentVolume configuration from `persistentVolume.yml`.
+1. `kubectl apply -f persistentVolume.yml`  
+   Create a PersistentVolume.
+2. `kubectl apply -f persistentVolumeClaim.yml`  
+   Request storage through a PersistentVolumeClaim.
 
-3. `vim persistentVolumeClaim.yml`  
-   Create or edit a PersistentVolumeClaim configuration file.
+### StorageClasses
 
-4. `kubectl apply -f persistentVolumeClaim.yml`  
-   Apply the PersistentVolumeClaim configuration from `persistentVolumeClaim.yml`.
+1. `kubectl get storageclass`  
+   List all storage classes available in the cluster.
 
-5. `kubectl get pv`  
-   List all PersistentVolumes in the cluster.
+### ConfigMaps and Secrets
 
-6. `kubectl get pvc`  
-   List all PersistentVolumeClaims in the cluster.
-
-7. `kubectl delete pvc/[pvc_name]`  
-   Delete the specified PersistentVolumeClaim.
-
-8. `kubectl delete pv/[pv_name]`  
-   Delete the specified PersistentVolume.
+1. `kubectl create configmap app-config --from-file=config.properties`  
+   Create a ConfigMap from a file.
+2. `kubectl create secret generic db-credentials --from-literal=username=admin --from-literal=password=admin123`  
+   Create a Secret with database credentials.
 
 ---
 
-## **Role-Based Access Control (RBAC)**
+## **Scaling and Scheduling**
 
-1. `vim role.yml`  
-   Create or edit a Role configuration file.
+### HPA and VPA
 
-2. `kubectl apply -f role.yml`  
-   Apply the Role configuration from `role.yml`.
+1. `kubectl autoscale deployment nginx --cpu-percent=50 --min=1 --max=10 -n nginx`  
+   Enable Horizontal Pod Autoscaler (HPA).
+2. `kubectl apply -f vpa.yml`  
+   Deploy a Vertical Pod Autoscaler (VPA).
 
-3. `vim role-binding.yml`  
-   Create or edit a RoleBinding configuration file.
+### Node Affinity and Taints/Tolerations
 
-4. `kubectl apply -f role-binding.yml`  
-   Apply the RoleBinding configuration from `role-binding.yml`.
+1. `kubectl taint nodes node1 key=value:NoSchedule`  
+   Apply a taint to a node.
+2. `kubectl apply -f node-affinity.yml`  
+   Define node affinity rules for pods.
 
-5. `kubectl auth can-i [verb] [resource] --as [user] -n [namespace]`  
-   Check if a user has permissions to perform a specific action on a resource.
+### Resource Quotas, Limits, Probes
 
-6. `kubectl describe rolebinding [rolebinding_name] -n [namespace]`  
-   Display detailed information about a RoleBinding in the specified namespace.
-
----
-
-## **Kubernetes Dashboard**
-
-1. `kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml`  
-   Deploy the Kubernetes Dashboard.
-
-2. `vim dashboard-admin-user.yml`  
-   Create or edit a Dashboard admin user configuration file.
-
-3. `kubectl apply -f dashboard-admin-user.yml`  
-   Apply the admin user configuration for the Kubernetes Dashboard.
-
-4. `kubectl proxy --port=8001 --address=0.0.0.0`  
-   Start the Kubernetes API proxy accessible on port 8001.
-
-5. `kubectl -n kubernetes-dashboard create token admin-user`  
-   Generate a token for the admin user to access the dashboard.
+1. `kubectl apply -f resourcequota.yml`  
+   Set resource limits and quotas in a namespace.
+2. `kubectl describe quota my-quota -n dev`  
+   Display details of a resource quota.
 
 ---
 
-## **Git Integration**
+## **Cluster Administration**
 
-1. `git init`  
-   Initialize a new Git repository.
+### RBAC
 
-2. `git remote add origin [repository_url]`  
-   Add a remote Git repository.
+1. `kubectl apply -f role.yml`  
+   Define a Role for access control.
+2. `kubectl apply -f rolebinding.yml`  
+   Bind the Role to a user or service account.
 
-3. `git add .`  
-   Stage all changes for commit.
+### Custom Resource Definitions (CRDs)
 
-4. `git commit -m "Commit message"`  
-   Commit the staged changes with a message.
-
-5. `git push origin main`  
-   Push changes to the `main` branch of the remote repository.
+1. `kubectl apply -f crd.yml`  
+   Define a Custom Resource Definition.
+2. `kubectl get crd`  
+   List all Custom Resource Definitions.
 
 ---
 
-This README organizes all commands topic-wise to ensure clarity and proper sequencing. Let me know if additional updates are needed!
+## **Monitoring and Logging**
+
+### Metrics Server
+
+1. `kubectl apply -f metrics-server.yml`  
+   Deploy the metrics server.
+2. `kubectl top node`  
+   Display resource usage by nodes.
+
+### Prometheus and Grafana
+
+1. `helm install prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring`  
+   Install Prometheus and Grafana for monitoring.
+2. `kubectl port-forward svc/prometheus-stack-grafana 3000:80 -n monitoring --address=0.0.0.0`  
+   Access Grafana through port forwarding.
+
+---
+
+## **Advanced Features**
+
+### Helm
+
+1. `helm create my-chart`  
+   Create a Helm chart.
+2. `helm install my-app my-chart -n my-namespace --create-namespace`  
+   Deploy an application using a Helm chart.
+
+### SideCar and Init Containers
+
+1. `kubectl apply -f init-container.yml`  
+   Deploy a pod with an Init Container.
+2. `kubectl apply -f sidecar-container.yml`  
+   Deploy a pod with a SideCar Container.
+
+---
+
+## **Security**
+
+1. `kubectl apply -f podsecuritypolicy.yml`  
+   Define pod security standards.
+2. `kubectl apply -f secrets-encryption.yml`  
+   Configure encryption for Kubernetes Secrets.
+
+---
+
+## **Cloud-Native Kubernetes**
+
+### Managed Services (EKS, AKS, GKE)
+
+1. `eksctl create cluster --name my-cluster`  
+   Create an EKS cluster using `eksctl`.
+
+### Cluster Autoscaler
+
+1. `kubectl apply -f cluster-autoscaler.yml`  
+   Deploy the Cluster Autoscaler.
+
+---
+
+## **Debugging and Troubleshooting**
+
+1. `kubectl logs pod-name -n namespace`  
+   View logs for a specific pod.
+2. `kubectl describe pod pod-name -n namespace`  
+   Display detailed information about a pod.
+3. `kubectl exec -it pod-name -n namespace -- bash`  
+   Access a running container.
+
+---
+
+## **Projects**
+
+### Resources for Projects:
+
+1. **Kubestarter:** [GitHub Repository](https://github.com/LondheShubham153/kubestarter)  
+   A comprehensive starter template for Kubernetes projects.
+
+2. **CI/CD Integration:** [Wanderlust Mega Project](https://github.com/LondheShubham153/Wanderlust-Mega-Project)  
+   Learn Kubernetes CI/CD with Jenkins and ArgoCD.
+
+3. **Microservices:** [Full Stack ChatApp](https://github.com/LondheShubham153/full-stack_chatApp)  
+   Build and deploy a full-stack chat application.
+
+4. **Monitoring:** [K8s Voting App](https://github.com/LondheShubham153/k8s-kind-voting-app)  
+   Implement monitoring with Prometheus and Grafana for a voting app.
 
