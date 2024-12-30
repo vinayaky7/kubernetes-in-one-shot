@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: notes-app
-        image: trainwithshubham/notes-app-k8s
+        image: vinayakyadav/notes-app-k8s
         ports:
         - containerPort: 8000
         resources:
